@@ -475,7 +475,6 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
             peerInfo(peer)->getChampion()->getStats().setSize(data);
             return true;
          }
-       
     
    // Mob Spawning-Creating, updated
   if(strncmp(message->getMessage(), cmd[12], strlen(cmd[12])) == 0) {
@@ -556,7 +555,10 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
     peerInfo(peer)->getChampion()->getStats().setGold(data);
     return true;
       }
-   }
+      
+      }
+      
+     
 
 
     switch(message->type) {
