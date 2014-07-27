@@ -477,7 +477,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
          }
        
     
-   // Mob Spawning-Creating
+   // Mob Spawning-Creating, updated
   if(strncmp(message->getMessage(), cmd[12], strlen(cmd[12])) == 0) {
 	const char *cmd[] = { ".junglespawn baron" , ".junglespawn wolves", ".junglespawn red", ".junglespawn blue", ".junglespawn dragon", ".junglespawn wraiths", ".junglespawn golems"};
 	   if(strncmp(message->getMessage(), cmd[0], strlen(cmd[0])) == 0) {
