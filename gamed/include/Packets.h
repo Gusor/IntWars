@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Buffer.h"
 #include "Client.h"
 #include "Minion.h"
+#include "Turret.h"
 
 #if defined( __GNUC__ )
 #pragma pack(1)
@@ -88,17 +89,7 @@ struct GameHeader {
     uint32 ticks;
 };
 
-typedef struct _SynchBlock {
-    _SynchBlock() {
-        userId = 0xFFFFFFFFFFFFFFFF;
-        unk = 0x1E;
-        teamId = 0x00006400;
-        bot = 0;
-        memset(name, 0, 64);
-        memset(type, 0, 64);
-        memcpy(rank, "GOLD", 30);
-    }
-
+/*typedef struct _SynchBlock {
     uint64 userId;
     uint16 unk;
     uint32 skill1;
@@ -108,7 +99,7 @@ typedef struct _SynchBlock {
     uint8 name[64];
     uint8 type[64];
     uint8 rank[30];
-} SynchBlock;
+} SynchBlock;*/
 
 struct ClientReady {
     uint32 cmd;
@@ -116,18 +107,40 @@ struct ClientReady {
     uint32 teamId;
 };
 
-typedef struct _SynchVersionAns {
-    _SynchVersionAns() {
-        header.cmd = PKT_S2C_SynchVersion;
-        ok = 9;
-        mapId = 1;
-        memset(version, 0, 2958);
-        memcpy(version, "Version 4.12.0.356 [PUBLIC]", 28);
-        memcpy(gameMode, "CLASSIC", 8);
-        //dwOpt = 0x377192;
+class SynchVersionAns : public BasePacket {
+public:
+
+   SynchVersionAns(const std::vector<ClientInfo*>& players, const std::string& version, const std::string& gameMode) : BasePacket(PKT_S2C_SynchVersion) {
+      buffer << (uint8)9; // unk
+      buffer << (uint32)1; // mapId
+      for(auto p : players) {
+         buffer << p->userId;
+         buffer << (uint16)0x1E; // unk
+         buffer << p->summonerSkills[0];
+         buffer << p->summonerSkills[1];
+         buffer << (uint8)0; // bot boolean
+         buffer << p->getTeam();
+         buffer << p->getName();
+         buffer.fill(0, 64-p->getName().length());
+         buffer.fill(0, 64);
+         buffer << p->getRank();
+         buffer.fill(0, 30-p->getRank().length());
+      }
+      
+      for(int i = 0; i < 12-players.size(); ++i) {
+         buffer << (int64)-1;
+         buffer.fill(0, 173);
+      }
+            
+        buffer << version;
+        buffer.fill(0, 256-version.length());
+        buffer << gameMode;
+        buffer.fill(0, 128-gameMode.length());
+        
+        buffer.fill(0, 2574);
     }
 
-    PacketHeader header;
+   /* PacketHeader header;
     uint8 ok;
     uint32 mapId;
     SynchBlock players[12];
@@ -151,8 +164,8 @@ typedef struct _SynchVersionAns {
     uint32 dwUnk1;
     uint32 dwOpt; //0x377192
     uint8 bUnk1[0x100];
-    uint8 bUnk2[11];
-} SynchVersionAns;
+    uint8 bUnk2[11];*/
+};
 
 typedef struct _PingLoadInfo {
     PacketHeader header;
@@ -399,12 +412,15 @@ struct ChatMessage {
 
     uint32 playerNo;
     ChatType type;
-    uint32 lenght;
+    uint32 length;
     uint8 unk3[32];
     int8 msg;
 
     int8 *getMessage() {
         return &msg;
+    }
+    uint32 *getLength() {
+       return &length;
     }
 };
 
@@ -516,18 +532,20 @@ struct HeroSpawn2 {
     uint32 f4;
 };
 
-struct TurretSpawn {
-    TurretSpawn() {
-        header.cmd = PKT_S2C_TurretSpawn;
-        tID = 0;
-        memset(&name, 0, 29 + 42); //Set name + type to zero
-    }
+class TurretSpawn : public BasePacket {
+public:
+   TurretSpawn(Turret* t) : BasePacket(PKT_S2C_TurretSpawn) {
+      buffer << t->getNetId();
+      buffer << t->getName();
+      buffer.fill(0, 28-t->getName().length()+42);
+   }
 
-    PacketHeader header;
-    uint32 tID;
-    uint8 name[28];
-    uint8 type[42];
+   /*PacketHeader header;
+   uint32 tID;
+   uint8 name[28];
+   uint8 type[42];*/
 };
+
 struct GameTimer {
     GameTimer(float fTime) {
         header.cmd = PKT_S2C_GameTimer;

@@ -18,8 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <chrono>
 #include <thread>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 #include "stdafx.h"
 #include "Game.h"
+#include "SummonersRift.h"
 
 #define REFRESH_RATE 5
 
@@ -58,7 +61,42 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
 	_blowfish = new BlowFish((uint8*)key.c_str(), 16);
 	initHandlers();
    
-   map = new Map(this);
+   map = new SummonersRift(this);
+   
+   // TODO : put the following in a config file !
+   std::string summonerName = "Test";
+   std::string championName = "Ezreal";
+   std::string skinNo = "6";
+
+   std::ifstream fin("player1.txt");
+   if (fin.good())
+   {
+      std::getline(fin, summonerName);
+      std::getline(fin, championName);
+      std::getline(fin, skinNo);
+      fin.close();
+   }
+   else
+   {
+      fin.close();
+      std::ofstream fout("player1.txt");
+      fout << summonerName << '\n';
+      fout << championName << '\n';
+      fout << skinNo << '\n';
+      fout.close();
+   }
+   
+
+   ClientInfo* player = new ClientInfo();
+   player->setName(summonerName);
+   Champion* c = ChampionFactory::getChampionFromType(championName, map, GetNewNetID());
+   map->addObject(c);
+   player->setChampion(c);
+   player->setSkinNo( atoi(skinNo.c_str()) );
+   player->userId = 47917791; // same as StartClient.bat
+   player->setSummoners(SPL_Ignite, SPL_Flash);
+   
+   players.push_back(player);
 	
 	return _isAlive = true;
 }
@@ -80,12 +118,7 @@ void Game::netLoop()
 
             /* Set some defaults */
             event.peer->mtu = PEER_MTU;
-
-            event.peer->data = new ClientInfo();
-            peerInfo(event.peer)->setName("Test");
-            peerInfo(event.peer)->setChampion(ChampionFactory::getChampionFromType("Ezreal", map, GetNewNetID()));
-            peerInfo(event.peer)->setSkinNo(6);
-            map->addObject(peerInfo(event.peer)->getChampion());
+            event.data = 0;
 
             break;
 

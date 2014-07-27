@@ -33,10 +33,10 @@
  */
  struct ip {
 #if BYTE_ORDER == LITTLE_ENDIAN
-	unsigned char 	ip_hl:4, 	// header length
-					ip_v:4;  	// version
+	unsigned char 	ip_hl:4; 	// header length
+	unsigned char	ip_v:4;  	// version
 #else
-	unsigned char	ip_v:4,  	// version
+	unsigned char	ip_v:4;  	// version
 	unsigned char	ip_hl;		// header length
 #endif
 	unsigned char	ip_tos;		// type of service

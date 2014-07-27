@@ -2,6 +2,8 @@
 
 #include "Map.h"
 #include "Projectile.h"
+#include "Spell.h"
+#include "Unit.h"
 
 void Projectile::update(int64 diff) {
 

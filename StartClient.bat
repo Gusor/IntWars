@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 echo -----------------------
 echo IntWars Solo Launcher
-echo -----------------------
+echo ----------------------- 
 start /d "build\gamed" intwars.exe && (
    echo Server started^^!
 ) || (

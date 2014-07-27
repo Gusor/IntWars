@@ -154,7 +154,7 @@ bool Game::handlePacket(ENetPeer *peer, ENetPacket *packet, uint8 channelID)
 {
 	if(packet->dataLength >= 8)
 	{
-		if(peerInfo(peer)->keyChecked)
+		if(peerInfo(peer))
 			_blowfish->Decrypt(packet->data, packet->dataLength-(packet->dataLength%8)); //Encrypt everything minus the last bytes that overflow the 8 byte boundary
 	}
 

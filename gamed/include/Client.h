@@ -22,13 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ChampionFactory.h"
 #include <string>
 
+enum TeamId {
+   TEAM_BLUE = 0x64,
+   TEAM_PURPLE = 0x65
+};
+
 struct ClientInfo
 {
-	ClientInfo()
+	ClientInfo() : keyChecked(false), ticks(0), skinNo(0), rank("CHALLENGER"), team(TEAM_BLUE)
 	{
-		keyChecked = false;
-		ticks = 0;
-		skinNo = 0;
 	}
 
 	~ClientInfo()
@@ -50,22 +52,34 @@ struct ClientInfo
 		this->skinNo = skinNo;
 	}
    
+   const std::string& getRank() const { return rank; }
+   uint32 getTeam() const { return team; }
+   
    Champion* getChampion() const { return champion; }
    
    const std::string& getName() const { return name; }
    
    uint32 getSkinNo() const { return skinNo; }
+   
+   void setSummoners(uint32 sum1, uint32 sum2) {
+      summonerSkills[0] = sum1;
+      summonerSkills[1] = sum2;
+   }
 
    uint32 getTicks()
    {
       ticks++;
       return ticks;
    }
+   
    bool keyChecked;
    uint64 userId;
    uint32 ticks;
    uint32 skinNo;
-   std::string name;
+   uint32 summonerSkills[2];
+   std::string name, rank;
+   uint32 team;
+   
    Champion* champion;
 
 };

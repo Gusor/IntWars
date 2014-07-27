@@ -108,3 +108,10 @@ UpgradeLog*.htm
  
 # Folder config file
 Desktop.ini
+
+# UNIX Makefiles
+Makefile
+
+# Ninja build files
+build.ninja
+rules.ninja
