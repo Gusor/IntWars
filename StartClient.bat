@@ -11,6 +11,7 @@ start /d "build\gamed" intwars.exe && (
    pause
    exit
 )
+
 set RADS_PATH=
 echo ===================
 echo Finding other LoL directory path..
