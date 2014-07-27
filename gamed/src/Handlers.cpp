@@ -555,7 +555,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
            
     peerInfo(peer)->getChampion()->getStats().setGold(data);
     return true;
-	}
+      }
    }
 
 
