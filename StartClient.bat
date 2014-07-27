@@ -3,14 +3,6 @@ setlocal enabledelayedexpansion
 echo -----------------------
 echo IntWars Solo Launcher
 echo ----------------------- 
-start /d "build\gamed" intwars.exe && (
-   echo Server started^^!
-) || (
-   echo Server not found^^!
-   echo You have to compile it by yourself, please read a tutorial^^!
-   pause
-   exit
-)
 
 set RADS_PATH=
 echo ===================

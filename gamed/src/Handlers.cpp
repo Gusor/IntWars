@@ -535,10 +535,8 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
 		   sendPacket(peer, lpSpawn22, CHL_S2C);
         	return true;
       }
-	  
-	  
-	  
    return true;
+   
       }
 	  
 	     if(strncmp(message->getMessage(), cmd[13], strlen(cmd[13])) == 0) {
@@ -557,7 +555,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
            
     peerInfo(peer)->getChampion()->getStats().setGold(data);
     return true;
-   }
+	}
    }
 
 
