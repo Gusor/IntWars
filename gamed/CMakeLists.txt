@@ -16,4 +16,4 @@ ENDIF()
 
 include_directories(include ../dep/include ../dep/include/intlib)
 add_executable(intwars ${src})
-target_link_libraries(intwars enet intlib)
+target_link_libraries(intwars enet intlib libjson)

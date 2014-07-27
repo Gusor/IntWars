@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Inventory.h"
 #include "ItemFactory.h"
 #include "ChatBox.h"
+#include "JsonReader.h"
 
 #include <vector>
 #include <string>
@@ -271,6 +272,11 @@ bool Game::handleMove(ENetPeer *peer, ENetPacket *packet) {
    //TODO, Implement stop commands
    case STOP:
    {
+       
+       
+       //TODO anticheat, currently it trusts client 100%
+       
+      peerInfo(peer)->getChampion()->setPosition(request->x, request->y);
       float x = ((request->x) - MAP_WIDTH)/2;
       float y = ((request->y) - MAP_HEIGHT)/2;
       
@@ -360,6 +366,18 @@ bool Game::handleCastSpell(HANDLE_ARGS) {
    sendPacket(peer, response, CHL_S2C);
 
    }
+   
+     // float x = ((peerInfo(peer)->getChampion()->getX()) - MAP_WIDTH)/2;
+   //   float y = ((peerInfo(peer)->getChampion()->getY()) - MAP_HEIGHT)/2;
+   
+   peerInfo(peer)->getChampion()->setUnitTarget(0);
+   peerInfo(peer)->getChampion()->setPosition(peerInfo(peer)->getChampion()->getX(), peerInfo(peer)->getChampion()->getY());
+   
+   /*std::vector<MovementVector> vMoves;
+   vMoves.push_back(MovementVector(x, y));
+       
+   peerInfo(peer)->getChampion()->setWaypoints(vMoves);*/
+
 
    return true;
 }
@@ -368,7 +386,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
     ChatMessage *message = reinterpret_cast<ChatMessage *>(packet->data);
     //Lets do commands
     if(message->msg == '.') {
-        const char *cmd[] = { ".set", ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".spawnjungle", ".skillpoints" };
+        const char *cmd[] = { ".set", ".gold", ".speed", ".health", ".xp", ".ap", ".ad", ".mana", ".model", ".help", ".spawn", ".size", ".junglespawn", ".skillpoints", ".gold" };
         //Set field
         if(strncmp(message->getMessage(), cmd[0], strlen(cmd[0])) == 0) {
             uint32 blockNo, fieldNo;
@@ -493,12 +511,21 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
         
     SkillUpResponse skillUpResponse(peerInfo(peer)->getChampion()->getNetId(), 0, 0, 17);
     sendPacket(peer, skillUpResponse, CHL_GAMEPLAY);
-    
+    return true;
+   }
+        
+   if(strncmp(message->getMessage(), cmd[14], strlen(cmd[14])) == 0){
+    float data = (float)atoi(&message->getMessage()[strlen(cmd[14])+1]);
+           
+    printf("Setting gold to %f\n", data);
+           
+    peerInfo(peer)->getChampion()->getStats().setGold(data);
+    return true;
    }
     
     // Mob Spawning-Creating
   if(strncmp(message->getMessage(), cmd[12], strlen(cmd[12])) == 0) {
-	const char *cmd[] = { "baron" , "wolves", "red", "blue", "dragon", "wraiths", "golems"};
+	const char *cmd[] = { ".junglespawn baron" , ".junglespawn wolves", ".junglespawn red", ".junglespawn blue", ".junglespawn dragon", ".junglespawn wraiths", ".junglespawn golems"};
 	if(strncmp(message->getMessage(), cmd[0], strlen(cmd[0])) == 0) {
 		LevelPropSpawn lpSpawn5(GetNewNetID(), "Worm", "Worm", 4569, 10193, -63.1034774f);
 		sendPacket(peer, lpSpawn5, CHL_S2C);
@@ -547,6 +574,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
 		LevelPropSpawn lpSpawn22(GetNewNetID(), "SmallGolem", "SmallGolem", 7887, 2461, 54);
 		sendPacket(peer, lpSpawn22, CHL_S2C);
 	}
+   return true;
     }
     }
 
@@ -593,15 +621,20 @@ bool Game::handleBuyItem(HANDLE_ARGS) {
     Item newItem = ItemFactory::getItemFromId(request->id);
     
    // todo: trinket support
+     JsonReader reader = JsonReader(request->id); // read stats from json file and modify them
     
-    if(peerInfo(peer)->getChampion()->getStats().getGold() >= newItem.price){//if we can afford item
+    
+    if(peerInfo(peer)->getChampion()->getStats().getGold() >= reader.gold){//if we can afford item
+        
+        reader.readItemStats(&peerInfo(peer)->getChampion()->getStats());
         peerInfo(peer)->getChampion()->inventory.addItemNew(newItem);//add it to inventory
-        peerInfo(peer)->getChampion()->getStats().setGold(peerInfo(peer)->getChampion()->getStats().getGold() - newItem.price); 
+     //   peerInfo(peer)->getChampion()->getStats().setGold(peerInfo(peer)->getChampion()->getStats().getGold() - newItem.price); 
     }
     
+
       
-    for(int i=0;i<6;i++){//loop through all inventory slots, and update them
-        if(peerInfo(peer)->getChampion()->inventory.items[i].id != -1){
+    for(int i=0x0;i<0x6;i++){//loop through all inventory slots, and update them
+        if(peerInfo(peer)->getChampion()->inventory.items[i].id != -1 && peerInfo(peer)->getChampion()->inventory.isFull() == false){
         BuyItemAns response;
         response.header.netId = request->header.netId;
         response.itemId = peerInfo(peer)->getChampion()->inventory.items[i].id;

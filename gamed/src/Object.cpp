@@ -1,6 +1,7 @@
 #include "Object.h"
 #include <cmath>
 #include <algorithm>
+#include "Vector2.h"
 
 using namespace std;
 
@@ -40,13 +41,31 @@ void Object::Move(int64 diff) {
 	if(!target)
 	  return;
 	
-	calculateVector(target->getX(), target->getY());
+  Vector2 to = Vector2(target->getX(), target->getY());
+   Vector2 cur = Vector2(x, y);
+   
+   Vector2 goingTo =  to - cur;
 
-	float factor = 0.000001f*diff*getMoveSpeed();
+	Vector2 norm = goingTo.Normalize();
 
-	x += factor*xvector;
-	y += factor*yvector;
-	
+
+	printf("Going to vector x: %f, y:%f \n", norm.X, norm.Y);
+
+	double deltaMovement = (double)(getMoveSpeed()) * 0.000001f*diff;
+
+
+
+
+	float xx = norm.X * deltaMovement;
+	float yy = norm.Y * deltaMovement;
+
+      
+   x+= xx;
+   y+=yy;
+   
+
+	float factor = 0.000001f*diff*(getMoveSpeed());
+
 	/* If the target was a simple point, stop when it is reached */
 	if(target->isSimpleTarget() && distanceWith(target) < factor) {
 	   if(++curWaypoint >= waypoints.size()) {

@@ -37,5 +37,10 @@ int main(int argc, char **argv)
       
 
       
-  fprintf(stderr,"%08X\n", getHash(argv[1])); 
+  fprintf(stderr,"%08X\n", getHash(argv[1]));
+  
+  
+  unsigned short a = 0x108F;
+  float aa = (float)a;
+  fprintf(stderr,"%f", aa);
 }

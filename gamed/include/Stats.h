@@ -48,6 +48,7 @@ enum FieldMaskFour : uint32
    FM4_Vision2     = 0x00000200,
    FM4_Speed       = 0x00000400,
    FM4_ModelSize   = 0x00000800,
+   FM4_Level       = 0x00002000 //not sure how to edit this, but it is level as setting it to any value changes level to 0
 };
 
 enum FieldMaskFive : uint32
@@ -80,6 +81,10 @@ public:
    
    virtual float getBonusAdFlat() const {
       return getStat(MM_Two, FM2_Bonus_Ad_Flat);
+   }
+   
+   virtual float getBonusApFlat() const {
+     return getStat(MM_Two, FM2_Bonus_Ap_Flat);
    }
    
    virtual float getBonusAdPct() const {
@@ -118,6 +123,10 @@ public:
       return getStat(MM_Four, FM4_MaxHp);
    }
    
+      virtual float getMaxMana() const {
+      return getStat(MM_Four, FM4_MaxMp);
+   }
+   
    virtual float getMovementSpeed() const {
       return getStat(MM_Four, FM4_Speed);
    }
@@ -137,13 +146,24 @@ public:
    }
 
 
-
+   virtual void setCritChance(float crit) {
+      return setStat(MM_Two, FM2_Crit_Chance, crit);
+   }
+   
    virtual void setBaseAd(float ad) {
       setStat(MM_Two, FM2_Base_Ad, ad);
    }
    
    virtual void setRange(float range) {
       setStat(MM_Two, FM2_Range, range);
+   }
+   
+   virtual void setBonusAdFlat(float ad) {
+      setStat(MM_Two, FM2_Bonus_Ad_Flat, ad);
+   }
+   
+   virtual void setBonusApFlat(float ap) {
+   setStat(MM_Two, FM2_Bonus_Ap_Flat, ap);
    }
    
    virtual void setArmor(float armor) {
@@ -198,6 +218,11 @@ public:
 
    virtual void setExp(float EXP) {
 	  setStat(MM_Four, FM4_exp, EXP);
+   }
+   
+   
+   virtual void setLevel(float level) {
+	  setStat(MM_Four, FM4_Level, level);
    }
 
    virtual void setSize(float Size) {
