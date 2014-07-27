@@ -2,8 +2,7 @@
 setlocal enabledelayedexpansion
 echo -----------------------
 echo IntWars Solo Launcher
-echo ----------------------- 
-
+echo -----------------------
 set RADS_PATH=
 echo ===================
 echo Finding other LoL directory path..
