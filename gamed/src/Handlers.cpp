@@ -553,7 +553,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
         	return true;
       }
    return true;
-	}
+      }
    }
 
 

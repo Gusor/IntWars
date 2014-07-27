@@ -29,7 +29,7 @@ enum TeamId {
 
 struct ClientInfo
 {
-	ClientInfo()
+	ClientInfo() : keyChecked(false), ticks(0), skinNo(0), rank("GOLD"), team(TEAM_BLUE)
 	{
 	}
 
