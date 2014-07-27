@@ -475,24 +475,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
             peerInfo(peer)->getChampion()->getStats().setSize(data);
             return true;
          }
-        
-   if(strncmp(message->getMessage(), cmd[13], strlen(cmd[13])) == 0) {
        
-       peerInfo(peer)->getChampion()->setSkillPoints(17);
-        
-    SkillUpResponse skillUpResponse(peerInfo(peer)->getChampion()->getNetId(), 0, 0, 17);
-    sendPacket(peer, skillUpResponse, CHL_GAMEPLAY);
-    return true;
-   }
-        
-   if(strncmp(message->getMessage(), cmd[14], strlen(cmd[14])) == 0){
-    float data = (float)atoi(&message->getMessage()[strlen(cmd[14])+1]);
-           
-    printf("Setting gold to %f\n", data);
-           
-    peerInfo(peer)->getChampion()->getStats().setGold(data);
-    return true;
-   }
     
    // Mob Spawning-Creating
   if(strncmp(message->getMessage(), cmd[12], strlen(cmd[12])) == 0) {
@@ -552,8 +535,29 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
 		   sendPacket(peer, lpSpawn22, CHL_S2C);
         	return true;
       }
+	  
+	  
+	  
    return true;
       }
+	  
+	     if(strncmp(message->getMessage(), cmd[13], strlen(cmd[13])) == 0) {
+       
+       peerInfo(peer)->getChampion()->setSkillPoints(17);
+        
+    SkillUpResponse skillUpResponse(peerInfo(peer)->getChampion()->getNetId(), 0, 0, 17);
+    sendPacket(peer, skillUpResponse, CHL_GAMEPLAY);
+    return true;
+   }
+        
+   if(strncmp(message->getMessage(), cmd[14], strlen(cmd[14])) == 0){
+    float data = (float)atoi(&message->getMessage()[strlen(cmd[14])+1]);
+           
+    printf("Setting gold to %f\n", data);
+           
+    peerInfo(peer)->getChampion()->getStats().setGold(data);
+    return true;
+   }
    }
 
 
