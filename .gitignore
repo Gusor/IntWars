@@ -99,6 +99,7 @@ cmake_install.cmake
 
 build/
 win/NetBeans/IntWars/nbproject/private/
+data/*.json
  
 # Backup & report files from converting an old project file to a newer Visual Studio version
 _UpgradeReport_Files/
