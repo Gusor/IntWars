@@ -40,15 +40,19 @@ bool Game::handleKeyCheck(ENetPeer *peer, ENetPacket *packet) {
       return false;
    }
 
+   uint32 playerNo = 0;
+
    for(ClientInfo* player : players) {
       if(player->userId == userId) {
          peer->data = player;
          KeyCheck response;
          response.userId = keyCheck->userId;
+         response.playerNo = playerNo;
          bool bRet = sendPacket(peer, reinterpret_cast<uint8 *>(&response), sizeof(KeyCheck), CHL_HANDSHAKE);
          handleGameNumber(peer, NULL);//Send 0x91 Packet?
          return true;
       }
+      ++playerNo;
    }
 
    return false;
@@ -66,7 +70,7 @@ bool Game::handleGameNumber(ENetPeer *peer, ENetPacket *packet) {
 bool Game::handleSynch(ENetPeer *peer, ENetPacket *packet) {
     SynchVersion *version = reinterpret_cast<SynchVersion *>(packet->data);
     //Logging->writeLine("Client version: %s\n", version->version);
-    SynchVersionAns answer(players, "Version 4.12.0.356 [PUBLIC]", "CLASSIC");
+    SynchVersionAns answer(players, "Version 4.13.0.262 [PUBLIC]", "CLASSIC");
     printPacket(reinterpret_cast<uint8 *>(&answer), sizeof(answer));
     return sendPacket(peer, answer, 3);
 }
@@ -75,11 +79,8 @@ bool Game::handleMap(ENetPeer *peer, ENetPacket *packet) {
     LoadScreenPlayerName loadName(*peerInfo(peer));
     LoadScreenPlayerChampion loadChampion(*peerInfo(peer));
     //Builds team info
-    LoadScreenInfo screenInfo;
-    screenInfo.bluePlayerNo = 1;
-    screenInfo.redPlayerNo = 0;
-    screenInfo.bluePlayerIds[0] = peerInfo(peer)->userId;
-    bool pInfo = sendPacket(peer, reinterpret_cast<uint8 *>(&screenInfo), sizeof(LoadScreenInfo), CHL_LOADING_SCREEN);
+    LoadScreenInfo screenInfo(players);
+    bool pInfo = sendPacket(peer, screenInfo, CHL_LOADING_SCREEN);
     //For all players send this info
     bool pName = sendPacket(peer, loadName, CHL_LOADING_SCREEN);
     bool pHero = sendPacket(peer, loadChampion, CHL_LOADING_SCREEN);
@@ -93,38 +94,35 @@ bool Game::handleSpawn(ENetPeer *peer, ENetPacket *packet) {
    bool p1 = sendPacket(peer, reinterpret_cast<uint8 *>(&start), sizeof(StatePacket2), CHL_S2C);
    printf("Spawning map\r\n");
 
-   HeroSpawn spawn(peerInfo(peer)->getChampion()->getNetId(), 0, peerInfo(peer)->getName(), peerInfo(peer)->getChampion()->getType(), peerInfo(peer)->getSkinNo());
-   bool p2 = sendPacket(peer, spawn, CHL_S2C);
+   int playerId = 0;
 
-   PlayerInfo info(peerInfo(peer)->getChampion()->getNetId(), peerInfo(peer)->summonerSkills[0], peerInfo(peer)->summonerSkills[1]);
-   sendPacket(peer, info, CHL_S2C);
+   for(auto p : players) {
+      HeroSpawn spawn(p, playerId++);
+      sendPacket(peer, spawn, CHL_S2C);
+      
+      HeroSpawn2 h2(p->getChampion());
+      sendPacket(peer, h2, CHL_S2C);
+      
+      PlayerInfo info(p);
+      sendPacket(peer, info, CHL_S2C); 
+   }
 
-   HeroSpawn2 h2;
-   h2.header.netId = peerInfo(peer)->getChampion()->getNetId();
-   sendPacket(peer, reinterpret_cast<uint8 *>(&h2), sizeof(HeroSpawn2), CHL_S2C);
-   notifySetHealth(peerInfo(peer)->getChampion());
-   
    const std::map<uint32, Object*>& objects = map->getObjects();
  
    for(auto kv : objects) {
       Turret* t = dynamic_cast<Turret*>(kv.second);
-      if(!t) {
+      if(t) {
+         TurretSpawn turretSpawn(t);
+         sendPacket(peer, turretSpawn, CHL_S2C);
          continue;
       }
    
-      TurretSpawn turretSpawn(t);
-      sendPacket(peer, turretSpawn, CHL_S2C);
+      LevelProp* lp = dynamic_cast<LevelProp*>(kv.second);
+      if(lp) {
+         LevelPropSpawn lpsPacket(lp);
+         sendPacket(peer, lpsPacket, CHL_S2C);
+      }
    }
-    
-   //Spawn Props
-   LevelPropSpawn lpSpawn(GetNewNetID(), "LevelProp_Yonkey", "Yonkey", 12465, 14422.257f, 101);
-   sendPacket(peer, lpSpawn, CHL_S2C);
-   LevelPropSpawn lpSpawn2(GetNewNetID(), "LevelProp_Yonkey1", "Yonkey", -76, 1769.1589f, 94);
-   sendPacket(peer, lpSpawn2, CHL_S2C);
-   LevelPropSpawn lpSpawn3(GetNewNetID(), "LevelProp_ShopMale", "ShopMale", 13374, 14245.673f, 194);
-   sendPacket(peer, lpSpawn3, CHL_S2C);
-   LevelPropSpawn lpSpawn4(GetNewNetID(), "LevelProp_ShopMale1", "ShopMale", -99, 855.6632f, 191);
-   sendPacket(peer, lpSpawn4, CHL_S2C);
 
    StatePacket end(PKT_S2C_EndSpawn);
    bool p3 = sendPacket(peer, reinterpret_cast<uint8 *>(&end), sizeof(StatePacket), CHL_S2C);
@@ -142,31 +140,24 @@ bool Game::handleSpawn(ENetPeer *peer, ENetPacket *packet) {
    GameTimerUpdate timer3(0.4f); //0xC1
    sendPacket(peer, reinterpret_cast<uint8 *>(&timer3), sizeof(GameTimerUpdate), CHL_S2C);
 
-   return p1 & p2 & p3;
+   return true;
 }
 
 bool Game::handleStartGame(HANDLE_ARGS) {
-   StatePacket start(PKT_S2C_StartGame);
-   sendPacket(peer, reinterpret_cast<uint8 *>(&start), sizeof(StatePacket), CHL_S2C);
+
+   if(++playersReady == players.size()) {
+      StatePacket start(PKT_S2C_StartGame);
+      broadcastPacket(reinterpret_cast<uint8 *>(&start), sizeof(StatePacket), CHL_S2C);
    
-   _started = true;
+      _started = true;
+   }
    
    FogUpdate2 test;
    test.x = 0;
    test.y = 0;
    test.radius = 1;
    test.unk1 = 2;
-   //uint8 p[] = {0xC5, 0x19, 0x00, 0x00, 0x40, 0x00, 0x00, 0x50};
-   //sendPacket(peer, reinterpret_cast<uint8*>(p), sizeof(p), 3);
-   //sendPacket(peer, reinterpret_cast<uint8 *>(&test), sizeof(FogUpdate2), 3);
-   //playing around 8-)
 
-   /*CharacterStats stats(FM1_Gold, 0, 0, 0, 0);
-   stats->netId = peerInfo(peer)->netId;
-   stats->setValue(1, FM1_Gold, gold);*/
-   //Logging->writeLine("Set gold to %f\n", gold);
-   //sendPacket(peer, reinterpret_cast<uint8 *>(stats), stats->getSize(), CHL_LOW_PRIORITY, 2);
-   //stats->destroy();
    return true;
 }
 
@@ -273,37 +264,29 @@ bool Game::handleMove(ENetPeer *peer, ENetPacket *packet) {
 }
 
 bool Game::handleLoadPing(ENetPeer *peer, ENetPacket *packet) {
-    PingLoadInfo *loadInfo = reinterpret_cast<PingLoadInfo *>(packet->data);
-    PingLoadInfo response;
-    memcpy(&response, packet->data, sizeof(PingLoadInfo));
-    response.header.cmd = PKT_S2C_Ping_Load_Info;
-    response.userId = peerInfo(peer)->userId;
-    //Logging->writeLine("loaded: %f, ping: %f, %f\n", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
-    bool bRet = broadcastPacket(reinterpret_cast<uint8 *>(&response), sizeof(PingLoadInfo), CHL_LOW_PRIORITY, UNRELIABLE);
-    static bool bLoad = false;
-    if(!bLoad) {
-        handleMap(peer, NULL);
-        bLoad = true;
-    }
-    return bRet;
+   PingLoadInfo *loadInfo = reinterpret_cast<PingLoadInfo *>(packet->data);
+   PingLoadInfo response;
+   memcpy(&response, packet->data, sizeof(PingLoadInfo));
+   response.header.cmd = PKT_S2C_Ping_Load_Info;
+   response.userId = peerInfo(peer)->userId;
+   //Logging->writeLine("loaded: %f, ping: %f, %f\n", loadInfo->loaded, loadInfo->ping, loadInfo->f3);
+   return broadcastPacket(reinterpret_cast<uint8 *>(&response), sizeof(PingLoadInfo), CHL_LOW_PRIORITY, UNRELIABLE);
 }
 
 bool Game::handleQueryStatus(HANDLE_ARGS) {
-    QueryStatus response;
-    return sendPacket(peer, reinterpret_cast<uint8 *>(&response), sizeof(QueryStatus), CHL_S2C);
+   QueryStatus response;
+   return sendPacket(peer, reinterpret_cast<uint8 *>(&response), sizeof(QueryStatus), CHL_S2C);
 }
 
 bool Game::handleClick(HANDLE_ARGS) {
    Click *click = reinterpret_cast<Click *>(packet->data);
    printf("Object %u clicked on %u\n", peerInfo(peer)->getChampion()->getNetId(),click->targetNetId);
-   
+
    return true;
 }
 
 bool Game::handleCastSpell(HANDLE_ARGS) {
    CastSpell *spell = reinterpret_cast<CastSpell *>(packet->data);
-   
- 
 
    printf("Spell Cast : Slot %d, coord %f ; %f, coord2 %f, %f, target NetId %08X\n", spell->spellSlot & 0x3F, spell->x, spell->y, spell->x2, spell->y2, spell->targetNetId);
 
@@ -313,26 +296,9 @@ bool Game::handleCastSpell(HANDLE_ARGS) {
       return false;
    }
    
-   int spellSlot = spell->spellSlot & 0x3F;
-   
-   CastSpellAns response(s, spell->x, spell->y);
-   
-   if(spellSlot != 2){ //todo: proper system for sending these
-
-   Unk unk(peerInfo(peer)->getChampion()->getNetId(), spell->x, spell->y, spell->targetNetId);
-   sendPacket(peer, reinterpret_cast<uint8 *>(&unk), sizeof(unk), CHL_S2C);
-   
-   sendPacket(peer, response, CHL_S2C);
-
-   SpawnProjectile sp(GetNewNetID(), GetNewNetID(), peerInfo(peer)->getChampion(), spell->x, spell->y);
-   sendPacket(peer, sp, CHL_S2C);
-   }
-   if(spellSlot == 2){
- 
    CastSpellAns response(s, spell->x, spell->y);
    sendPacket(peer, response, CHL_S2C);
 
-   }
    
      // float x = ((peerInfo(peer)->getChampion()->getX()) - MAP_WIDTH)/2;
    //   float y = ((peerInfo(peer)->getChampion()->getY()) - MAP_HEIGHT)/2;
@@ -344,7 +310,6 @@ bool Game::handleCastSpell(HANDLE_ARGS) {
    vMoves.push_back(MovementVector(x, y));
        
    peerInfo(peer)->getChampion()->setWaypoints(vMoves);*/
-
 
    return true;
 }
@@ -467,10 +432,10 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
             return true;
         }
         //Size
-        if(strncmp(message->getMessage(), cmd[11], strlen(cmd[11])) == 0) {
-            float data = (float)atoi(&message->getMessage()[strlen(cmd[11])+1]);
+   if(strncmp(message->getMessage(), cmd[11], strlen(cmd[11])) == 0) {
+      float data = (float)atoi(&message->getMessage()[strlen(cmd[11])+1]);
          
-            printf("Setting size to %f\n", data);
+      printf("Setting size to %f\n", data);
          
             peerInfo(peer)->getChampion()->getStats().setSize(data);
             return true;
@@ -478,62 +443,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
     
    // Mob Spawning-Creating, updated
   if(strncmp(message->getMessage(), cmd[12], strlen(cmd[12])) == 0) {
-	const char *cmd[] = { ".junglespawn baron" , ".junglespawn wolves", ".junglespawn red", ".junglespawn blue", ".junglespawn dragon", ".junglespawn wraiths", ".junglespawn golems"};
-	   if(strncmp(message->getMessage(), cmd[0], strlen(cmd[0])) == 0) {
-		   LevelPropSpawn lpSpawn5(GetNewNetID(), "Worm", "Worm", 4569, 10193, -63.1034774f);
-		   sendPacket(peer, lpSpawn5, CHL_S2C);
-        	return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[1], strlen(cmd[1])) == 0) {
-		   LevelPropSpawn lpSpawn7(GetNewNetID(), "Wolf", "Wolf",  3524, 6223, 56);
-		   sendPacket(peer, lpSpawn7, CHL_S2C);
-		   LevelPropSpawn lpSpawn8(GetNewNetID(), "GiantWolf", "GiantWolf", 3374, 6223, 56);
-		   sendPacket(peer, lpSpawn8, CHL_S2C);
-		   LevelPropSpawn lpSpawn9(GetNewNetID(), "Wolf", "Wolf", 3324, 6373, 56);
-		   sendPacket(peer, lpSpawn9, CHL_S2C);
-        	return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[2], strlen(cmd[2])) == 0) {
-		   LevelPropSpawn lpSpawn10(GetNewNetID(), "YoungLizard", "YoungLizard", 7273, 3887, 55);
-		   sendPacket(peer, lpSpawn10, CHL_S2C);
-		   LevelPropSpawn lpSpawn11(GetNewNetID(), "LizardElder", "LizardElder", 7429, 3905, 56);
-		   sendPacket(peer, lpSpawn11, CHL_S2C);
-		   LevelPropSpawn lpSpawn12(GetNewNetID(), "YoungLizard", "YoungLizard", 7433, 3657, 54);
-		   sendPacket(peer, lpSpawn12, CHL_S2C);
-        	return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[3], strlen(cmd[3])) == 0) {
-		   LevelPropSpawn lpSpawn13(GetNewNetID(), "YoungLizard", "YoungLizard", 3521, 7751, 54);
-		   sendPacket(peer, lpSpawn13, CHL_S2C);
-		   LevelPropSpawn lpSpawn14(GetNewNetID(), "AncientGolem", "AncientGolem", 3547, 7613, 55);
-		   sendPacket(peer, lpSpawn14, CHL_S2C);
-		   LevelPropSpawn lpSpawn15(GetNewNetID(), "YoungLizard", "YoungLizard",  3437, 7641, 55);
-		   sendPacket(peer, lpSpawn15, CHL_S2C);
-        	return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[4], strlen(cmd[4])) == 0) {
-		   LevelPropSpawn lpSpawn16(GetNewNetID(), "redDragon", "redDragon", 9447, 4155, -61);
-		   sendPacket(peer, lpSpawn16, CHL_S2C);
-		   return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[5], strlen(cmd[5])) == 0) {
-	      LevelPropSpawn lpSpawn17(GetNewNetID(), "LesserWraith", "LesserWraith", 6697, 5215, 57);
-	      sendPacket(peer, lpSpawn17, CHL_S2C);
-	      LevelPropSpawn lpSpawn18(GetNewNetID(), "LesserWraith", "LesserWraith", 6647, 5065, 52);
-	      sendPacket(peer, lpSpawn18, CHL_S2C);
-	      LevelPropSpawn lpSpawn19(GetNewNetID(), "LesserWraith", "LesserWraith", 6547, 5365, 61);
-	      sendPacket(peer, lpSpawn19, CHL_S2C);
-	      LevelPropSpawn lpSpawn20(GetNewNetID(), "Wraith", "Wraith", 6447, 5165, 54);
-	      sendPacket(peer, lpSpawn20, CHL_S2C);
-    	   return true;
-	   }
-	   if(strncmp(message->getMessage(), cmd[6], strlen(cmd[6])) == 0) {
-         LevelPropSpawn lpSpawn21(GetNewNetID(), "Golem", "Golem", 8195, 2615, 54);
-		   sendPacket(peer, lpSpawn21, CHL_S2C);
-		   LevelPropSpawn lpSpawn22(GetNewNetID(), "SmallGolem", "SmallGolem", 7887, 2461, 54);
-		   sendPacket(peer, lpSpawn22, CHL_S2C);
-        	return true;
-      }
+	   const char *cmd[] = { "c baron" , "c wolves", "c red", "c blue", "c dragon", "c wraiths", "c golems"};
    return true;
    
       }
@@ -545,7 +455,6 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
     SkillUpResponse skillUpResponse(peerInfo(peer)->getChampion()->getNetId(), 0, 0, 17);
     sendPacket(peer, skillUpResponse, CHL_GAMEPLAY);
     return true;
-   }
         
    if(strncmp(message->getMessage(), cmd[14], strlen(cmd[14])) == 0){
     float data = (float)atoi(&message->getMessage()[strlen(cmd[14])+1]);
@@ -556,6 +465,7 @@ bool Game::handleChatBoxMessage(HANDLE_ARGS) {
     return true;
       }
       
+      }
       }
       
      

@@ -2,9 +2,15 @@
 #include "Game.h"
 #include "Map.h"
 #include "Vector2.h"
+
+
+
 void ArcaneShift::finishCasting() {
    Spell::finishCasting();
 
+
+   
+   
    printf("Teleporting to X:%f , Y:%f", x, y);
 
    Vector2 trueCoords;

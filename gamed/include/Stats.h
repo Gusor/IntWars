@@ -2,6 +2,7 @@
 #define __H_STATS
 
 #include <map>
+#include <algorithm>
 
 #include "stdafx.h"
 #include "common.h"
@@ -127,6 +128,14 @@ public:
       return getStat(MM_Four, FM4_MaxMp);
    }
    
+   virtual float getHp5() {
+      return getStat(MM_Two, FM2_Hp5);
+   }
+   
+   virtual float getMana5() {
+      return getStat(MM_Two, FM2_Mp5);
+   }
+   
    virtual float getMovementSpeed() const {
       return getStat(MM_Four, FM4_Speed);
    }
@@ -144,8 +153,6 @@ public:
        return getStat(MM_One, FM1_Gold);
        
    }
-
-
    virtual void setCritChance(float crit) {
       return setStat(MM_Two, FM2_Crit_Chance, crit);
    }
@@ -234,6 +241,20 @@ public:
    
    virtual void setAttackSpeedMultiplier(float multiplier) {
       return setStat(MM_Two, FM2_Atks_multiplier, multiplier);
+   }
+   
+   void update(int64 diff) {
+      if(getHp5() > 0 && getCurrentHealth() != getMaxHealth()) {
+         float newHealth = getCurrentHealth()+(getHp5()/5.f)*(diff*0.000001);
+         newHealth = std::min(getMaxHealth(), newHealth);
+         setCurrentHealth(newHealth);
+      }
+      
+      if(getMana5() > 0 && getCurrentMana() != getMaxMana()) {
+         float newMana = getCurrentMana()+(getMana5()/5.f)*(diff*0.000001);
+         newMana = std::min(getMaxMana(), newMana);
+         setCurrentMana(newMana);
+      }
    }
    
    /**

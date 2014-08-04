@@ -50,51 +50,51 @@ protected:
    bool movementUpdated;
    bool toRemove;
    
-   int hitboxWidth, hitboxHeight;
+   uint32 collisionRadius;
    
 public:
 	
-    virtual ~Object();
-    Object(Map* map, uint32 id, float x, float y, int hitboxWidth, int hitboxHeight);
+   virtual ~Object();
+   Object(Map* map, uint32 id, float x, float y, uint32 collisionRadius);
 
-    /**
-    * Moves the object depending on its target, updating its coordinate.
-    * @param diff the amount of milliseconds the object is supposed to move
-    */
-    void Move(int64 diff);
-    
-    void calculateVector(float xtarget, float ytarget);
+   /**
+   * Moves the object depending on its target, updating its coordinate.
+   * @param diff the amount of milliseconds the object is supposed to move
+   */
+   void Move(int64 diff);
 
-    /**
-    * Sets the side (= team) of the object
-    * @param side the new side
-    */
-    void setSide(unsigned int side) { this->side = side; }
-    unsigned int getSide() { return side; }
+   void calculateVector(float xtarget, float ytarget);
 
-    virtual void update(int64 diff);
-    virtual float getMoveSpeed() const = 0;
+   /**
+   * Sets the side (= team) of the object
+   * @param side the new side
+   */
+   void setSide(unsigned int side) { this->side = side; }
+   unsigned int getSide() { return side; }
 
-    virtual bool isSimpleTarget() { return false; }
+   virtual void update(int64 diff);
+   virtual float getMoveSpeed() const = 0;
 
-    Target* getTarget() { return target; }
-    void setTarget(Target* target);
-    void setUnitTarget(Unit* target) { unitTarget = target; }
-    void setWaypoints(const std::vector<MovementVector>& waypoints);
-    
-    const std::vector<MovementVector>& getWaypoints() { return waypoints; }
-    bool isMovementUpdated() { return movementUpdated; }
-    void clearMovementUpdated() { movementUpdated = false; }
-    bool isToRemove() { return toRemove; }
-    void setToRemove() { toRemove = true; }
-    
-    uint32 getNetId() const { return id; }
-    Map* getMap() const { return map; }
+   virtual bool isSimpleTarget() { return false; }
 
-    void setPosition(float x, float y);
+   Target* getTarget() { return target; }
+   void setTarget(Target* target);
+   void setUnitTarget(Unit* target) { unitTarget = target; }
+   void setWaypoints(const std::vector<MovementVector>& waypoints);
 
-    bool collide(Object* o);
-    bool isPointInHitbox(float x, float y);
+   const std::vector<MovementVector>& getWaypoints() { return waypoints; }
+   bool isMovementUpdated() { return movementUpdated; }
+   void clearMovementUpdated() { movementUpdated = false; }
+   bool isToRemove() { return toRemove; }
+   void setToRemove() { toRemove = true; }
+
+   uint32 getNetId() const { return id; }
+   Map* getMap() const { return map; }
+
+   void setPosition(float x, float y);
+
+   uint32 getCollisionRadius() const { return collisionRadius; }
+   bool collide(Object* o);
 };
 
 #endif /* OBJECT_H_ */

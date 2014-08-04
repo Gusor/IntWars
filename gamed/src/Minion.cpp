@@ -1,7 +1,7 @@
 #include "Minion.h"
 #include "MinionStats.h"
 
-Minion::Minion(Map* map, uint32 id, MinionSpawnType type, MinionSpawnPosition position) : Unit(map, id, new MinionStats(), 0, 0, new MinionAI(this)), type(type), position(position) {
+Minion::Minion(Map* map, uint32 id, MinionSpawnType type, MinionSpawnPosition position) : Unit(map, id, new MinionStats(), 40, 0, 0, new MinionAI(this)), type(type), position(position) {
    switch(position) {
    case SPAWN_BLUE_TOP:
       setSide(0);

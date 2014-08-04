@@ -39,6 +39,8 @@ class Game
 	public:
 		Game();
 		~Game();
+                
+                uint32 strToId(std::string str);
 
 		bool initialize(ENetAddress *address, const char *baseKey);
 		void netLoop();
@@ -75,6 +77,7 @@ class Game
       void notifyDamageDone(Unit* source, Unit* target, float amount);
       void notifyAutoAttack(Unit* attacker, Unit* victim);
       void notifyTeleport(Unit* u);
+      void notifyProjectileSpawn(Projectile* p);
    
    protected:
 		// Tools
@@ -87,6 +90,7 @@ class Game
 
 	private:
 		bool _isAlive, _started;
+      int playersReady;
 		ENetHost *_server;
 		BlowFish *_blowfish;
       ENetPeer* currentPeer;

@@ -19,6 +19,45 @@
           <in>blowfish.h</in>
           <in>general.h</in>
         </df>
+        <df name="json">
+          <in>assertions.h</in>
+          <in>autolink.h</in>
+          <in>config.h</in>
+          <in>features.h</in>
+          <in>forwards.h</in>
+          <in>json.h</in>
+          <in>reader.h</in>
+          <in>value.h</in>
+          <in>version.h</in>
+          <in>writer.h</in>
+        </df>
+        <df name="lua">
+          <in>lapi.h</in>
+          <in>lauxlib.h</in>
+          <in>lcode.h</in>
+          <in>lctype.h</in>
+          <in>ldebug.h</in>
+          <in>ldo.h</in>
+          <in>lfunc.h</in>
+          <in>lgc.h</in>
+          <in>llex.h</in>
+          <in>llimits.h</in>
+          <in>lmem.h</in>
+          <in>lobject.h</in>
+          <in>lopcodes.h</in>
+          <in>lparser.h</in>
+          <in>lstate.h</in>
+          <in>lstring.h</in>
+          <in>ltable.h</in>
+          <in>ltm.h</in>
+          <in>lua.h</in>
+          <in>lua.hpp</in>
+          <in>luaconf.h</in>
+          <in>lualib.h</in>
+          <in>lundump.h</in>
+          <in>lvm.h</in>
+          <in>lzio.h</in>
+        </df>
       </df>
       <df name="src">
         <df name="enet">
@@ -36,6 +75,51 @@
           <in>blowfish.cpp</in>
           <in>general.cpp</in>
         </df>
+        <df name="libjson">
+          <in>json_batchallocator.h</in>
+          <in>json_reader.cpp</in>
+          <in>json_tool.h</in>
+          <in>json_value.cpp</in>
+          <in>json_writer.cpp</in>
+        </df>
+        <df name="lua">
+          <in>lapi.c</in>
+          <in>lauxlib.c</in>
+          <in>lbaselib.c</in>
+          <in>lbitlib.c</in>
+          <in>lcode.c</in>
+          <in>lcorolib.c</in>
+          <in>lctype.c</in>
+          <in>ldblib.c</in>
+          <in>ldebug.c</in>
+          <in>ldo.c</in>
+          <in>ldump.c</in>
+          <in>lfunc.c</in>
+          <in>lgc.c</in>
+          <in>linit.c</in>
+          <in>liolib.c</in>
+          <in>llex.c</in>
+          <in>lmathlib.c</in>
+          <in>lmem.c</in>
+          <in>loadlib.c</in>
+          <in>loadlib_rel.c</in>
+          <in>lobject.c</in>
+          <in>lopcodes.c</in>
+          <in>loslib.c</in>
+          <in>lparser.c</in>
+          <in>lstate.c</in>
+          <in>lstring.c</in>
+          <in>lstrlib.c</in>
+          <in>ltable.c</in>
+          <in>ltablib.c</in>
+          <in>ltm.c</in>
+          <in>lua.c</in>
+          <in>luac.c</in>
+          <in>lundump.c</in>
+          <in>lvm.c</in>
+          <in>lzio.c</in>
+          <in>wmain.c</in>
+        </df>
       </df>
     </df>
     <df root="../../../gamed" name="1">
@@ -48,6 +132,7 @@
             <in>Corki.h</in>
           </df>
           <df name="Ezreal">
+            <in>ArcaneShift.h</in>
             <in>Ezreal.h</in>
             <in>MysticShot.h</in>
           </df>
@@ -82,6 +167,7 @@
         <in>Inventory.h</in>
         <in>Item.h</in>
         <in>ItemFactory.h</in>
+        <in>LevelProp.h</in>
         <in>Map.h</in>
         <in>Minion.h</in>
         <in>MinionStats.h</in>
@@ -90,17 +176,24 @@
         <in>Projectile.h</in>
         <in>Spell.h</in>
         <in>Stats.h</in>
+        <in>SummonersRift.h</in>
         <in>Target.h</in>
+        <in>Turret.h</in>
         <in>Unit.h</in>
+        <in>Vector2.h</in>
         <in>common.h</in>
         <in>stdafx.h</in>
       </df>
       <df name="src">
+        <in>ArcaneShift.cpp</in>
         <in>Champion.cpp</in>
         <in>Game.cpp</in>
         <in>Handlers.cpp</in>
         <in>Inventory.cpp</in>
         <in>Item.cpp</in>
+        <in>JsonReader.cpp</in>
+        <in>JsonReader.h</in>
+        <in>LuaTest.cpp</in>
         <in>Map.cpp</in>
         <in>Minion.cpp</in>
         <in>MysticShot.cpp</in>
@@ -111,21 +204,33 @@
         <in>Projectile.cpp</in>
         <in>Spell.cpp</in>
         <in>Stats.cpp</in>
+        <in>SummonersRift.cpp</in>
         <in>Target.cpp</in>
         <in>Unit.cpp</in>
+        <in>Vector2.cpp</in>
         <in>main.cpp</in>
+      </df>
+      <df name="test">
+        <in>LuaTest.cpp</in>
       </df>
     </df>
     <df root="../../../utils" name="2">
-      <df name="win">
-        <in>ip.h</in>
-        <in>platforms-time.h</in>
+      <df name="lib">
       </df>
-      <in>base64.cpp</in>
-      <in>base64.h</in>
-      <in>blowfish.cpp</in>
-      <in>blowfish.h</in>
-      <in>pcapDecrypt.cpp</in>
+      <df name="pcapDecrypt">
+        <df name="win">
+          <in>ip.h</in>
+          <in>platforms-time.h</in>
+        </df>
+        <in>base64.cpp</in>
+        <in>base64.h</in>
+        <in>blowfish.cpp</in>
+        <in>blowfish.h</in>
+        <in>pcapDecrypt.cpp</in>
+      </df>
+      <in>Compiling hashgen.txt</in>
+      <in>HashGenerator.cpp</in>
+      <in>LuaTest.cpp</in>
     </df>
   </logicalFolder>
   <projectmakefile>../../../build/Makefile</projectmakefile>

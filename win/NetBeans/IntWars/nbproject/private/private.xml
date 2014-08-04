@@ -10,10 +10,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Cameron/Documents/GitHub/IntWars/gamed/src/Handlers.cpp</file>
-            <file>file:/C:/Users/Cameron/Documents/GitHub/IntWars/gamed/src/PacketHandler.cpp</file>
-            <file>file:/C:/Users/Cameron/Documents/GitHub/IntWars/gamed/include/Packets.h</file>
-            <file>file:/C:/Users/Cameron/Documents/GitHub/IntWars/gamed/include/Game.h</file>
+            <file>file:/D:/ElyotnaFork/IntWars/gamed/src/Game.cpp</file>
+            <file>file:/D:/ElyotnaFork/IntWars/gamed/src/Handlers.cpp</file>
         </group>
     </open-files>
 </project-private>

@@ -3,6 +3,10 @@
 #include "Game.h"
 #include "Map.h"
 
+#include "Vector2.h"
+
+#define MYSTICSHOT_RANGE 1150
+
 /**
  * This is called when the spell is finished casting, and we're supposed to
  * create the projectile
@@ -12,8 +16,18 @@ void MysticShot::finishCasting() {
 
    Map* m = owner->getMap();
    
-   Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), 60, 30, owner, new Target(x, y), this, 2000.f);
+   Vector2 trueCoords;
+   Vector2 cur(owner->getX(), owner->getY());
+   Vector2 to(x, y);
+   
+   Vector2 sub = to - cur;
+
+   sub = sub.Normalize(); 
+   trueCoords = cur + (sub * MYSTICSHOT_RANGE);
+   
+   Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), 30, owner, new Target(trueCoords.X, trueCoords.Y), this, 2000.f);
    owner->getMap()->addObject(p);
+   owner->getMap()->getGame()->notifyProjectileSpawn(p);
 }
 
 /**

@@ -146,6 +146,8 @@ enum SpellIds : uint32
    SPL_Test = 0x0103D94C,
 };
 
+
+
 enum MasterMask : uint8
 {
    MM_One          = 0x01,

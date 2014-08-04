@@ -32,15 +32,7 @@ int main(int argc, char **argv)
 {
       if (argc < 2) { 
     fprintf(stderr, "Usage: %s spell name(for example SummonerRevive)\n", argv[0]); 
-    exit(1); 
+    return 1; 
   }
-      
-
-      
-  fprintf(stderr,"%08X\n", getHash(argv[1]));
   
-  
-  unsigned short a = 0x108F;
-  float aa = (float)a;
-  fprintf(stderr,"%f", aa);
 }

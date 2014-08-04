@@ -1,6 +1,7 @@
 #include "SummonersRift.h"
 #include "Turret.h"
 #include "Game.h"
+#include "LevelProp.h"
 
 using namespace std;
 
@@ -35,6 +36,11 @@ SummonersRift::SummonersRift(Game* game) : Map(game) {
    for(string& s : szTurrets) {
       addObject(new Turret(this, GetNewNetID(), s, 0, 0));
    }
+   
+   addObject(new LevelProp(this, GetNewNetID(), 12465, 14422.257f, 101, "LevelProp_Yonkey", "Yonkey"));
+   addObject(new LevelProp(this, GetNewNetID(), -76, 1769.1589f, 94, "LevelProp_Yonkey1", "Yonkey"));
+   addObject(new LevelProp(this, GetNewNetID(), 13374, 14245.673f, 194, "LevelProp_ShopMale", "ShopMale"));
+   addObject(new LevelProp(this, GetNewNetID(), -99, 855.6632f, 191, "LevelProp_ShopMale1", "ShopMale"));
 
 }
 

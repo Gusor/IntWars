@@ -22,6 +22,11 @@
     </df>
     <df root="../../../gamed" name="1">
       <df name="include">
+        <df name="Champions">
+          <df name="Ezreal">
+            <in>ArcaneShift.h</in>
+          </df>
+        </df>
         <df name="Items">
           <in>HealthPot.h</in>
           <in>ManaPot.h</in>
@@ -30,17 +35,25 @@
         <in>Inventory.h</in>
         <in>Item.h</in>
         <in>ItemFactory.h</in>
+        <in>Vector2.h</in>
       </df>
       <df name="src">
+        <in>ArcaneShift.cpp</in>
         <in>Handlers.cpp</in>
         <in>Inventory.cpp</in>
         <in>Item.cpp</in>
+        <in>JsonReader.cpp</in>
+        <in>JsonReader.h</in>
+        <in>LuaTest.cpp</in>
         <in>PacketHandler.cpp</in>
         <in>Packets.cpp</in>
+        <in>Vector2.cpp</in>
         <in>main.cpp</in>
       </df>
     </df>
     <df root="../../../utils" name="2">
+      <in>Compiling hashgen.txt</in>
+      <in>HashGenerator.cpp</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -109,6 +122,11 @@
             tool="1"
             flavor2="0">
       </item>
+      <item path="../../../gamed/include/Champions/Ezreal/ArcaneShift.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="../../../gamed/include/Inventory.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../gamed/include/Item.h" ex="false" tool="3" flavor2="0">
@@ -133,11 +151,21 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../../gamed/include/Vector2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../gamed/src/ArcaneShift.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../../../gamed/src/Handlers.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="../../../gamed/src/Inventory.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../gamed/src/Item.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../gamed/src/JsonReader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../../../gamed/src/JsonReader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../gamed/src/LuaTest.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../gamed/src/PacketHandler.cpp"
             ex="false"
@@ -146,7 +174,16 @@
       </item>
       <item path="../../../gamed/src/Packets.cpp" ex="false" tool="1" flavor2="8">
       </item>
+      <item path="../../../gamed/src/Vector2.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="../../../gamed/src/main.cpp" ex="false" tool="1" flavor2="8">
+      </item>
+      <item path="../../../utils/Compiling hashgen.txt"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../../utils/HashGenerator.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <folder path="0">
         <ccTool>

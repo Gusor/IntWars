@@ -8,18 +8,18 @@ using namespace std;
 
 void Game::notifyMinionSpawned(Minion* m) {
    MinionSpawn ms(m);
-   sendPacket(currentPeer, reinterpret_cast<uint8*>(&ms),sizeof(ms), CHL_S2C);
+   broadcastPacket(reinterpret_cast<uint8*>(&ms),sizeof(ms), CHL_S2C);
    notifySetHealth(m);
 }
 
 void Game::notifySetHealth(Unit* u) {
    SetHealth sh(u);
-   sendPacket(currentPeer, sh, CHL_S2C);
+   broadcastPacket(sh, CHL_S2C);
 }
 
 void Game::notifyUpdatedStats(Unit* u) {
    UpdateStats us(u);
-   sendPacket(currentPeer, us, CHL_LOW_PRIORITY, 2);
+   broadcastPacket(us, CHL_LOW_PRIORITY, 2);
 }
 
 void Game::notifyTeleport(Unit* u){
@@ -29,7 +29,7 @@ void Game::notifyTeleport(Unit* u){
    // sendPacket(currentPeer, first, CHL_S2C);
        
     TeleportRequest second(u->getNetId(), u->teleportToX, u->teleportToY, false);
-    sendPacket(currentPeer, second, CHL_S2C);
+    broadcastPacket(second, CHL_S2C);
     
     u->needsToTeleport = false;
        
@@ -58,10 +58,15 @@ void Game::notifyMovement(Object* o) {
 
 void Game::notifyDamageDone(Unit* source, Unit* target, float amount) {
    DamageDone dd(source, target, amount);
-   sendPacket(currentPeer, dd, CHL_S2C);
+   broadcastPacket(dd, CHL_S2C);
 }
 
 void Game::notifyAutoAttack(Unit* attacker, Unit* victim) {
    AutoAttack aa(attacker, victim);
    broadcastPacket(aa, CHL_S2C);
+}
+
+void Game::notifyProjectileSpawn(Projectile* p ) {
+   SpawnProjectile sp(p);
+   broadcastPacket(sp, CHL_S2C);
 }

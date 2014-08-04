@@ -20,9 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include "stdafx.h"
 #include "Game.h"
 #include "SummonersRift.h"
+
+
+#include "sol/sol.hpp"
 
 #define REFRESH_RATE 5
 
@@ -31,7 +35,7 @@ uint32 GetNewNetID() {
 	return dwStart++;
 }
 
-Game::Game() : _started(false)
+Game::Game() : _started(false), playersReady(0)
 {
 
 }
@@ -42,6 +46,38 @@ Game::~Game()
 
 	delete _blowfish;
 	enet_host_destroy(_server);
+}
+
+uint32 Game::strToId(std::string str){
+    if(str == "FLASH"){
+        return SPL_Flash;
+    }else if(str == "IGNITE"){
+        return SPL_Ignite;
+    }else if(str == "HEAL"){
+        return SPL_Heal;
+    }else if(str == "BARRIER"){
+        return SPL_Barrier;
+        
+    }else if(str == "SMITE"){
+        return SPL_Smite;
+    }else if(str == "GHOST"){
+        return SPL_Ghost;
+    }else if(str == "REVIVE"){
+        return SPL_Revive;
+    }else if(str == "CLEANSE"){
+        return SPL_Cleanse;
+    }else if(str == "TELEPORT"){
+        return SPL_Teleport;
+    }
+    
+}
+
+template<typename T>
+std::string toString(const T& value)
+{
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
 }
 
 bool Game::initialize(ENetAddress *address, const char *baseKey)
@@ -63,40 +99,74 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
    
    map = new SummonersRift(this);
    
-   // TODO : put the following in a config file !
-   std::string summonerName = "Test";
-   std::string championName = "Ezreal";
-   std::string skinNo = "6";
-
-   std::ifstream fin("player1.txt");
-   if (fin.good())
-   {
-      std::getline(fin, summonerName);
-      std::getline(fin, championName);
-      std::getline(fin, skinNo);
-      fin.close();
-   }
-   else
-   {
-      fin.close();
-      std::ofstream fout("player1.txt");
-      fout << summonerName << '\n';
-      fout << championName << '\n';
-      fout << skinNo << '\n';
-      fout.close();
-   }
+   //TODO: better lua implementation
    
+    sol::state lua;
+    lua.open_libraries(sol::lib::base, sol::lib::table);
+    
+    lua.open_file("../../lua/config.lua");
+    sol::table playerList = lua.get<sol::table>("players");
+    for(int i=1;i<12;i++){
+        try{
+        std::string playerIndex = "player"+toString(i);
+        
+    sol::table player1 = playerList.get<sol::table>(playerIndex);
+    
+    std::string rank = player1.get<std::string>("rank");
+    std::string name = player1.get<std::string>("name");
+    std::string champion = player1.get<std::string>("champion");
+    std::string team = player1.get<std::string>("team");
+    int skin = player1.get<int>("skin");
+    std::string summoner1 = player1.get<std::string>("summoner1");
+    std::string summoner2 = player1.get<std::string>("summoner2");
 
-   ClientInfo* player = new ClientInfo();
-   player->setName(summonerName);
-   Champion* c = ChampionFactory::getChampionFromType(championName, map, GetNewNetID());
+    
+       ClientInfo* player;
+    
+    if(team == "BLUE"){
+        player = new ClientInfo(rank, TEAM_BLUE);
+    }else {
+        player = new ClientInfo(rank, TEAM_PURPLE);
+    }
+
+
+   
+   // TODO : put the following in a config file !
+ 
+   player->setName(name);
+   
+   
+   
+   Champion* c = ChampionFactory::getChampionFromType(champion, map, GetNewNetID());
+   c->setPosition(35.90f, 273.55f);
    map->addObject(c);
    player->setChampion(c);
-   player->setSkinNo( atoi(skinNo.c_str()) );
-   player->userId = 47917791; // same as StartClient.bat
-   player->setSummoners(SPL_Ignite, SPL_Flash);
+   player->setSkinNo(skin);
+   static int id = 1;
+   player->userId = id; // same as StartClient.bat
+   id++;
+   player->setSummoners(strToId(summoner1), strToId(summoner2));
    
    players.push_back(player);
+   
+                }catch(sol::error e){
+          break;  
+        }
+    }
+   
+   // Uncomment the following to get 2-players
+   /*ClientInfo* player2 = new ClientInfo("GOLD", TEAM_PURPLE);
+   player2->setName("tseT");
+   Champion* c2 = ChampionFactory::getChampionFromType("Ezreal", map, GetNewNetID());
+   c2->setPosition(100.f, 273.55f);
+   c2->setSide(1);
+   map->addObject(c2);
+   player2->setChampion(c2);
+   player2->setSkinNo(4);
+   player2->userId = 2; // same as StartClient.bat
+   player2->setSummoners(SPL_Ignite, SPL_Flash);
+   
+   players.push_back(player2);*/
 	
 	return _isAlive = true;
 }

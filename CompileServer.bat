@@ -1,6 +1,6 @@
 @echo off
-echo Building IntWars Server.
-echo ------------------------------
 cd build
-mingw32-make all
+echo Building IntWars Server and deps.
+echo ------------------------------
+mingw32-make all 
 pause
