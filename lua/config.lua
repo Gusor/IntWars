@@ -8,7 +8,7 @@ players = {
 ["summoner1"] = "HEAL",
 ["summoner2"] = "FLASH",
 ["ribbon"] = 2 --2=mentor(blue) 1 =leader(yellow) 4=cooperative(green)) 
-}  --[[,
+}  --[[, --uncomment this for more players! you can also ad more, up to 12!
 
 ["player2"] = {
 ["rank"] = "DIAMOND",
@@ -32,6 +32,5 @@ players = {
 ["ribbon"] = 2
 }--]]
 
---add players here, max 12
 
 }

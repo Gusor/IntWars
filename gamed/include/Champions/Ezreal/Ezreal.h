@@ -25,7 +25,7 @@ public:
       stats->setMagicArmor(30.f);
       stats->setHp5(5.5f);
       stats->setMp5(7.0f);
-      stats->setGoldPer5(9.5f);
+      //stats->setGoldPer5(9.5f);
    }
 
 

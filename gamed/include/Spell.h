@@ -6,6 +6,7 @@
 #include <vector>
 
 
+
 class Unit;
 class Champion;
 
@@ -68,6 +69,17 @@ public:
     */
    uint32 getId() const { return id; }
    float getCastTime() const { return castTime; }
+   
+   std::string getStringForSlot();
+   
+   /*
+    * does spell effects in lua if defined.
+    */
+   void doLua();
+   
+   void setSlot(int _slot){
+       slot=_slot;
+   }
    
    /**
     * TODO : Add in CDR % from champion's stat

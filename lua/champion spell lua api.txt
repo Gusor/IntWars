@@ -1,0 +1,2 @@
+getOwnerX(), getOwnerY() -> get caster champions coords
+getSpellToX, getSpellToY() -> spell casted to(NOTE: you must calculate range using vectors if you don't want unlimited spell range)
