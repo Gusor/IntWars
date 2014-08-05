@@ -117,6 +117,7 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
     std::string champion = player1.get<std::string>("champion");
     std::string team = player1.get<std::string>("team");
     int skin = player1.get<int>("skin");
+    int ribbon = player1.get<int>("ribbon");
     std::string summoner1 = player1.get<std::string>("summoner1");
     std::string summoner2 = player1.get<std::string>("summoner2");
 
@@ -124,9 +125,9 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
        ClientInfo* player;
     
     if(team == "BLUE"){
-        player = new ClientInfo(rank, TEAM_BLUE);
+        player = new ClientInfo(rank, TEAM_BLUE, ribbon);
     }else {
-        player = new ClientInfo(rank, TEAM_PURPLE);
+        player = new ClientInfo(rank, TEAM_PURPLE, ribbon);
     }
 
 

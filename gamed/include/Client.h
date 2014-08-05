@@ -29,7 +29,7 @@ enum TeamId : uint32 {
 
 struct ClientInfo
 {
-	ClientInfo(const std::string& rank, TeamId team) : keyChecked(false), ticks(0), skinNo(0), rank(rank), team(team)
+	ClientInfo(const std::string& rank, TeamId team, uint16 ribbon) : keyChecked(false), ticks(0), skinNo(0), rank(rank), team(team), ribbon(ribbon)
 	{
 	}
 
@@ -69,6 +69,10 @@ struct ClientInfo
    void setTicks(int a){
        ticks = (uint32) a;
    }
+   
+   uint32 getRibbon(){
+       return ribbon;
+   }
 
    uint32 getTicks()
    {
@@ -82,6 +86,7 @@ struct ClientInfo
    uint32 skinNo;
    uint32 summonerSkills[2];
    std::string name, rank;
+   uint16 ribbon;
    uint32 team;
    
    Champion* champion;

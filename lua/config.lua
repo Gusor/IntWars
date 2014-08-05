@@ -1,12 +1,13 @@
 players = {
 ["player1"] = {
-["rank"] = "CHALLENGER",
+["rank"] = "DIAMOND",
 ["name"] = "Test",
 ["champion"] = "Ezreal",
 ["team"] = "BLUE", --BLUE or PURPLE
-["skin"] = 1,
+["skin"] = 0,
 ["summoner1"] = "HEAL",
-["summoner2"] = "SMITE"
+["summoner2"] = "SMITE",
+["ribbon"] = 4 --2=mentor(blue) 1 =leader(yellow) 4=cooperative(green)) 
 },
 
 ["player2"] = {
@@ -16,7 +17,8 @@ players = {
 ["team"] = "BLUE", --BLUE or PURPLE
 ["skin"] = 1,
 ["summoner1"] = "FLASH",
-["summoner2"] = "IGNITE"
+["summoner2"] = "IGNITE",
+["ribbon"] = 2
 },
 
 ["player3"] = {
@@ -26,7 +28,8 @@ players = {
 ["team"] = "BLUE", --BLUE or PURPLE
 ["skin"] = 3,
 ["summoner1"] = "CLEANSE",
-["summoner2"] = "TELEPORT"
+["summoner2"] = "TELEPORT",
+["ribbon"] = 2
 }
 
 --add players here, max 12
