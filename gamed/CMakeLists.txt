@@ -15,7 +15,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 ENDIF()
 
 
-include_directories(include ../dep/include ../dep/include/intlib ../dep/include/lua)
+include_directories(include ../dep/include ../dep/include/intlib ../dep/include/lua ../dep/include/sol)
 
 add_executable(intwars ${src})
 

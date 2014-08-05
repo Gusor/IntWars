@@ -116,18 +116,17 @@ public:
       buffer << (uint32)1; // mapId
       for(auto p : players) {
          buffer << p->userId;
-         buffer << (uint16)0x5; // unk
+         buffer << (uint16)0x1E; // unk
          buffer << p->summonerSkills[0];
          buffer << p->summonerSkills[1];
          buffer << (uint8)0; // bot boolean
          buffer << p->getTeam();
          buffer << p->getName();
-         buffer.fill(2, 64-p->getName().length());
+         buffer.fill(0, 64-p->getName().length());
          buffer.fill(0, 64);
          buffer << p->getRank();
          buffer.fill(0, 28-p->getRank().length());
-         buffer << p->getRibbon();//(uint16) 0x6;  //ribbons, 2=mentor(blue) 1 =leader(yellow) 4=cooperative(green))
-         
+         buffer << (uint16)p->getRibbon();
       }
       
       for(int i = 0; i < 12-players.size(); ++i) {

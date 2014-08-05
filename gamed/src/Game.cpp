@@ -23,10 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include "stdafx.h"
 #include "Game.h"
+#include "LuaScript.h"
 #include "SummonersRift.h"
 
 
-#include "sol/sol.hpp"
+
+
 
 #define REFRESH_RATE 5
 
@@ -56,8 +58,7 @@ uint32 Game::strToId(std::string str){
     }else if(str == "HEAL"){
         return SPL_Heal;
     }else if(str == "BARRIER"){
-        return SPL_Barrier;
-        
+        return SPL_Barrier;  
     }else if(str == "SMITE"){
         return SPL_Smite;
     }else if(str == "GHOST"){
@@ -101,11 +102,15 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
    
    //TODO: better lua implementation
    
-    sol::state lua;
-    lua.open_libraries(sol::lib::base, sol::lib::table);
+   LuaScript script;
+   
+   script.loadScript("../../lua/config.lua");
+   
+  //  sol::state lua;
+  //  lua.open_libraries(sol::lib::base, sol::lib::table);
     
-    lua.open_file("../../lua/config.lua");
-    sol::table playerList = lua.get<sol::table>("players");
+  //  lua.open_file("../../lua/config.lua");
+    sol::table playerList = script.getTable("players");
     for(int i=1;i<12;i++){
         try{
         std::string playerIndex = "player"+toString(i);
@@ -120,7 +125,7 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
     int ribbon = player1.get<int>("ribbon");
     std::string summoner1 = player1.get<std::string>("summoner1");
     std::string summoner2 = player1.get<std::string>("summoner2");
-
+    
     
        ClientInfo* player;
     

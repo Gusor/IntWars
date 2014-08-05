@@ -2,13 +2,20 @@
 #include "Game.h"
 #include "Map.h"
 #include "Vector2.h"
-
-
+#include "LuaScript.h"
+#include "sol/state.hpp"
 
 void ArcaneShift::finishCasting() {
    Spell::finishCasting();
 
+   LuaScript script;
+  
+   
+   float ownerX = owner->getX();
+   
+   script.lua.set_function("getOwnerX", [&ownerX]() { return ownerX; });
 
+   script.loadScript("../../lua/ArcaneShift.lua"); //todo: abstract class that loads a lua file for any lua
    
    
    printf("Teleporting to X:%f , Y:%f", x, y);

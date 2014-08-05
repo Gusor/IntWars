@@ -153,6 +153,11 @@ public:
        return getStat(MM_One, FM1_Gold);
        
    }
+   
+      virtual float getGoldPer5(){
+       return getStat(MM_One, FM1_Gold_2);
+       
+   }
    virtual void setCritChance(float crit) {
       return setStat(MM_Two, FM2_Crit_Chance, crit);
    }
@@ -254,6 +259,10 @@ public:
          float newMana = getCurrentMana()+(getMana5()/5.f)*(diff*0.000001);
          newMana = std::min(getMaxMana(), newMana);
          setCurrentMana(newMana);
+      }
+      if(getGoldPer5() > 0){//todo: only generate gold if time > whatever time gold starts generating
+        float newGold = getGold()+(getGoldPer5()/5.f)*(diff*0.000001);
+        setGold(newGold);
       }
    }
    
