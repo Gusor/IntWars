@@ -64,7 +64,6 @@ void Spell::doLua(){
   
    float spellY = y;
    
-   //Champion aa = *owner;
    
    script.lua.set_function("getOwnerX", [&ownerX]() { return ownerX; });
    
@@ -75,12 +74,6 @@ void Spell::doLua(){
    script.lua.set_function("getSpellToY", [&spellY]() { return spellY; });
    
    
-   /*script.lua.set_function("getOwner", [&owner]() { 
-       return owner; 
-   })*/
-   
-  // script.lua.set_function("teleportTo", [&aa](float x, float y) { aa.teleportTo(x,y); });
-
    script.lua.set_function("teleportTo", [this](float _x, float _y) { // expose teleport to lua
    owner->needsToTeleport = true;
    owner->teleportToX = (_x-MAP_WIDTH) / 2; 
@@ -100,8 +93,6 @@ void Spell::doLua(){
    
 
 
- //  lua.new_userdata<champion> ("champion", "getChampion", &champion::getChampion);
-
    
    std::string scriptloc = "../../lua/champions/" + owner->getType() + "/" + getStringForSlot() + ".lua"; //lua/championname/(q/w/e/r), example: /lua/Ezreal/q, also for stuff like nidalee cougar they will have diff folders!
 
@@ -112,7 +103,7 @@ void Spell::doLua(){
    script.loadScript(scriptloc); //todo: abstract class that loads a lua file for any lua
    script.lua.script("finishCasting()");
    }catch(sol::error e){//lua error? don't crash the whole server
-       printf("Error! %s", e.what());
+       printf("%s", e.what());
    }
 }
 
