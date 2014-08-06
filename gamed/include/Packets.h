@@ -825,13 +825,13 @@ class CastSpellAns : public GamePacket {
 public:
    CastSpellAns(Spell* s, float x, float y) : GamePacket(PKT_S2C_CastSpellAns, s->getOwner()->getNetId()) {
       buffer << (uint8)0 << (uint8)0x66 << (uint8)0x00; // unk
-      buffer << s->getId();
+      buffer << s->getId(); // Spell hash, for example hash("EzrealMysticShot")
       buffer << (uint32)0x400001f6; // a net ID, but what for..
       buffer << (uint8)0 << (uint8)0 << (uint8)0;
       buffer << (uint16)0x3f80; // unk
       buffer << s->getOwner()->getNetId() << s->getOwner()->getNetId();
+      buffer << (uint32)s->getOwner()->getChampionHash();
       buffer << (uint32)0x400001f5; // Another net ID..
-      buffer << (uint32)0x9c0cb5a7; // unk
       buffer << x << 55.f << y;
       buffer << x << 55.f << y;
       buffer << (uint8)0;
@@ -883,12 +883,19 @@ public:
       buffer << (uint64)0x00000000d5002fce; // unk
       buffer << (uint32)0x7f7fffff; // unk
       buffer << (uint8)0 << (uint8)0x66 << (uint8)0;
-      buffer << (uint32)0x0a0fe625; // Projectile unique ID ; Right now hardcoded at Mystic Shot
+      buffer << (uint32)0x0a0fe625; // unk
       buffer << (uint32)0; // Second net ID
       buffer << (uint8)0; // unk
       buffer << (uint32)0x3f800000; // unk (1.0f)
       buffer << p->getOwner()->getNetId() << p->getOwner()->getNetId();
-      buffer << (uint32)0x9c0cb5a7; // unk
+      
+      Champion* c = dynamic_cast<Champion*>(p->getOwner());
+      if(c) {
+         buffer << (uint32)c->getChampionHash();
+      } else {
+         buffer << (uint32)0;
+      }
+      
       buffer << p->getNetId();
       buffer << p->getTarget()->getX() << 150.f << p->getTarget()->getY();
       buffer << p->getTarget()->getX() << 150.f << p->getTarget()->getY();

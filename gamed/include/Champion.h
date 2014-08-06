@@ -6,11 +6,6 @@
 #include "Spell.h"
 #include <vector>
 
-
-
-
-
-
 class Champion : public Unit {
 
 protected:
@@ -18,7 +13,7 @@ protected:
    std::vector<Spell*> spells;
    uint8 skillPoints;
    uint8 level;
-   float xp;
+   uint8 skin;
 
    
 public:
@@ -36,6 +31,9 @@ public:
    void setSkillPoints(int _skillPoints){
        skillPoints = (uint8)_skillPoints;
    }
+   
+   void setSkin(uint8 skin) { this->skin = skin; }
+   uint32 getChampionHash();
    
    uint8 getSkillPoints() const { return skillPoints; }
    

@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Inventory.h"
 #include "ItemFactory.h"
 #include "ChatBox.h"
-#include "JsonReader.h"
 
 #include <vector>
 #include <string>
@@ -299,18 +298,6 @@ bool Game::handleCastSpell(HANDLE_ARGS) {
    CastSpellAns response(s, spell->x, spell->y);
    sendPacket(peer, response, CHL_S2C);
 
-   
-     // float x = ((peerInfo(peer)->getChampion()->getX()) - MAP_WIDTH)/2;
-   //   float y = ((peerInfo(peer)->getChampion()->getY()) - MAP_HEIGHT)/2;
-   
-   peerInfo(peer)->getChampion()->setUnitTarget(0);
-   peerInfo(peer)->getChampion()->setPosition(peerInfo(peer)->getChampion()->getX(), peerInfo(peer)->getChampion()->getY());
-   
-   /*std::vector<MovementVector> vMoves;
-   vMoves.push_back(MovementVector(x, y));
-       
-   peerInfo(peer)->getChampion()->setWaypoints(vMoves);*/
-
    return true;
 }
 
@@ -512,21 +499,17 @@ bool Game::handleBuyItem(HANDLE_ARGS) {
      
     Item newItem = ItemFactory::getItemFromId(request->id);
     
-   // todo: trinket support
-     JsonReader reader = JsonReader(request->id); // read stats from json file and modify them
     
     
-    if(peerInfo(peer)->getChampion()->getStats().getGold() >= reader.gold){//if we can afford item
-        
-        reader.readItemStats(&peerInfo(peer)->getChampion()->getStats());
-        peerInfo(peer)->getChampion()->inventory.addItemNew(newItem);//add it to inventory
-     //   peerInfo(peer)->getChampion()->getStats().setGold(peerInfo(peer)->getChampion()->getStats().getGold() - newItem.price); 
-    }
+    //if(!peerInfo(peer)->getChampion()->inventory.isFull() == false){
+        printf("Add new item");
+        peerInfo(peer)->getChampion()->inventory.addItemNew(newItem);
+    //}
     
 
       
     for(int i=0x0;i<0x6;i++){//loop through all inventory slots, and update them
-        if(peerInfo(peer)->getChampion()->inventory.items[i].id != -1 && peerInfo(peer)->getChampion()->inventory.isFull() == false){
+        if(peerInfo(peer)->getChampion()->inventory.items[i].id != -1){
         BuyItemAns response;
         response.header.netId = request->header.netId;
         response.itemId = peerInfo(peer)->getChampion()->inventory.items[i].id;

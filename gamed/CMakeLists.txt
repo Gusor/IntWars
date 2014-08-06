@@ -15,8 +15,8 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 ENDIF()
 
 
-include_directories(include ../dep/include ../dep/include/intlib ../dep/include/lua ../dep/include/sol)
+include_directories(include ../dep/include ../dep/include/intlib ../dep/include/lua ../dep/include/sol ../dep/include/raf)
 
 add_executable(intwars ${src})
 
-target_link_libraries(intwars lua enet intlib libjson)
+target_link_libraries(intwars lua enet intlib raf)

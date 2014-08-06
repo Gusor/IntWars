@@ -79,10 +79,12 @@ class Game
       void notifyTeleport(Unit* u);
       void notifyProjectileSpawn(Projectile* p);
    
-   protected:
+
 		// Tools
-		void printPacket(const uint8 *buf, uint32 len);
+		static void printPacket(const uint8 *buf, uint32 len);
 		void printLine(uint8 *buf, uint32 len);
+      
+   protected:
 		bool sendPacket(ENetPeer *peer, const uint8 *data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);
       bool sendPacket(ENetPeer *peer, const Packet& packet, uint8 channelNo, uint32 flag = RELIABLE);
 		bool broadcastPacket(uint8 *data, uint32 length, uint8 channelNo, uint32 flag = RELIABLE);

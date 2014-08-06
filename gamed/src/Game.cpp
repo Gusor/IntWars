@@ -81,8 +81,7 @@ std::string toString(const T& value)
     return oss.str();
 }
 
-bool Game::initialize(ENetAddress *address, const char *baseKey)
-{
+bool Game::initialize(ENetAddress *address, const char *baseKey){
 	if (enet_initialize () != 0)
 		return false;
 	atexit(enet_deinitialize);
@@ -98,6 +97,8 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
 	_blowfish = new BlowFish((uint8*)key.c_str(), 16);
 	initHandlers();
    
+   
+   printf("Before map");
    map = new SummonersRift(this);
    
    //TODO: better lua implementation
@@ -143,9 +144,14 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
    
    
    
+   printf("Before Lua getchampionfortype %s\n", champion.c_str() );
    Champion* c = ChampionFactory::getChampionFromType(champion, map, GetNewNetID());
+   
+   printf("After Lua getchampionfortype %s\n", champion.c_str() );
    c->setPosition(35.90f, 273.55f);
+   
    map->addObject(c);
+   
    player->setChampion(c);
    player->setSkinNo(skin);
    static int id = 1;
@@ -153,12 +159,16 @@ bool Game::initialize(ENetAddress *address, const char *baseKey)
    id++;
    player->setSummoners(strToId(summoner1), strToId(summoner2));
    
+   
+   
    players.push_back(player);
    
                 }catch(sol::error e){
+                    //printf("Error loading champion: \n%s", e.what());
           break;  
         }
     }
+    
    
    // Uncomment the following to get 2-players
    /*ClientInfo* player2 = new ClientInfo("GOLD", TEAM_PURPLE);

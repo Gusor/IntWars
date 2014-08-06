@@ -40,8 +40,7 @@ void Object::Move(int64 diff) {
 
 	if(!target)
 	  return;
-	
-  Vector2 to = Vector2(target->getX(), target->getY());
+   Vector2 to = Vector2(target->getX(), target->getY());
    Vector2 cur = Vector2(x, y);
    
    Vector2 goingTo =  to - cur;
@@ -49,15 +48,9 @@ void Object::Move(int64 diff) {
 	Vector2 norm = goingTo.Normalize();
 
 
-	printf("Going to vector x: %f, y:%f \n", norm.X, norm.Y);
-   
-   Vector2 finall = cur + (norm * getMoveSpeed());
 
+	double deltaMovement = (double)(getMoveSpeed()) * 0.000001f*diff;
 
-
-	float factor = 0.000001f*diff*getMoveSpeed();
-   
-  double deltaMovement = (double)(getMoveSpeed()) * 0.000001f*diff;
 
 
 
@@ -65,9 +58,11 @@ void Object::Move(int64 diff) {
 	float yy = norm.Y * deltaMovement;
 
       
-   x+=xx;
+   x+= xx;
    y+=yy;
    
+
+	float factor = 0.000001f*diff*(getMoveSpeed());
 
 	/* If the target was a simple point, stop when it is reached */
 	if(target->isSimpleTarget() && distanceWith(target) < factor) {

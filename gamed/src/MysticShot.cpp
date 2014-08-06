@@ -1,4 +1,4 @@
-#include "Champions/Ezreal/MysticShot.h"
+/*#include "Champions/Ezreal/MysticShot.h"
 
 #include "Game.h"
 #include "Map.h"
@@ -8,10 +8,19 @@
 #define MYSTICSHOT_RANGE 1150
 
 /**
+ * Called when the character casts the spell
+ */
+/*bool MysticShot::cast(float x, float y, Unit* u) {
+   
+   owner->setTarget(0); // stop movement
+   return Spell::cast(x, y, u);
+}*/
+
+/**
  * This is called when the spell is finished casting, and we're supposed to
  * create the projectile
  */
-void MysticShot::finishCasting() {
+/*void MysticShot::finishCasting() {
    Spell::finishCasting();
 
   
@@ -28,13 +37,12 @@ void MysticShot::finishCasting() {
    
    Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), 30, owner, new Target(trueCoords.X, trueCoords.Y), this, 2000.f);
    owner->getMap()->addObject(p);
-   owner->getMap()->getGame()->notifyProjectileSpawn(p);*/
-}
+}*/
 
 /**
  * This will be called when Mystic's Shot projectile hits a unit
  */
-void MysticShot::applyEffects(Target* t, Projectile* p) {
+/*void MysticShot::applyEffects(Target* t, Projectile* p) {
    if(!p) {
       return;
    }
@@ -51,4 +59,4 @@ void MysticShot::applyEffects(Target* t, Projectile* p) {
    owner->dealDamageTo(u, damage[level-1], DAMAGE_TYPE_PHYSICAL, DAMAGE_SOURCE_SPELL);
    
    p->setToRemove();
-}
+}*/

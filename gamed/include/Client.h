@@ -45,6 +45,7 @@ struct ClientInfo
 	void setChampion(Champion* champion)
 	{
 		this->champion = champion; //ChampionFactory::getChampionFromType(type);
+      champion->setSkin(skinNo);
 	}
 	
 	void setSkinNo(uint32 skinNo)

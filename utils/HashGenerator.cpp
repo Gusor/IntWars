@@ -17,15 +17,21 @@ unsigned int getHash(const char *str)
 }
 
 /** Functions made by Intline9 **/
-unsigned int getHashObject(const char *str)
-{
-	unsigned int hash = 0;
-	const char* gobj = "_gobj";
-	for(unsigned int i = 0; i < strlen(str); i++)
-		hash = tolower(str[i]) + (0x1003F * hash);
-	for(unsigned int i = 0; i < strlen(gobj); i++)
-		hash = tolower(gobj[i]) + (0x1003F * hash);
-	return hash;
+unsigned int getCharacterHash(char *szName, unsigned int nSkin) {
+    char szSkin[32];
+    sprintf(szSkin, "%02d", nSkin);
+    unsigned int hash = 0;
+    const char *gobj = "[Character]";
+    for(unsigned int i = 0; i < strlen(gobj); i++) {
+        hash = tolower(gobj[i]) + (0x1003F * hash);
+    }
+    for(unsigned int i = 0; i < strlen(szName); i++) {
+        hash = tolower(szName[i]) + (0x1003F * hash);
+    }
+    for(unsigned int i = 0; i < strlen(szSkin); i++) {
+        hash = tolower(szSkin[i]) + (0x1003F * hash);
+    }
+    return hash;
 }
 
 int main(int argc, char **argv)
@@ -34,5 +40,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "Usage: %s spell name(for example SummonerRevive)\n", argv[0]); 
     return 1; 
   }
-  
+      
+
+      
+  fprintf(stderr,"%08X ; %08X\n", getHash(argv[1]), getCharacterHash(argv[1], 0)); 
 }

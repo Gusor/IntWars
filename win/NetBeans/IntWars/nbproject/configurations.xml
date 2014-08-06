@@ -35,6 +35,7 @@
         <in>Inventory.h</in>
         <in>Item.h</in>
         <in>ItemFactory.h</in>
+        <in>LuaScript.h</in>
         <in>Vector2.h</in>
       </df>
       <df name="src">
@@ -44,6 +45,7 @@
         <in>Item.cpp</in>
         <in>JsonReader.cpp</in>
         <in>JsonReader.h</in>
+        <in>LuaScript.cpp</in>
         <in>LuaTest.cpp</in>
         <in>PacketHandler.cpp</in>
         <in>Packets.cpp</in>
@@ -151,6 +153,8 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="../../../gamed/include/LuaScript.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="../../../gamed/include/Vector2.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../../../gamed/src/ArcaneShift.cpp" ex="false" tool="1" flavor2="0">
@@ -164,6 +168,8 @@
       <item path="../../../gamed/src/JsonReader.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../gamed/src/JsonReader.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../../../gamed/src/LuaScript.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../../../gamed/src/LuaTest.cpp" ex="false" tool="1" flavor2="0">
       </item>

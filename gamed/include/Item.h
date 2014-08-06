@@ -22,7 +22,7 @@ public:
 
 
 
-   int id;
+   int id = -1;
    int stackAmount = 1;
    bool active = false;
 

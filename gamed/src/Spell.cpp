@@ -1,9 +1,34 @@
 #include "Spell.h"
-#include "LuaScript.h"
-#include "sol/state.hpp"
-#include "Game.h"
 #include "Map.h"
-#include "Vector2.h"
+#include "Game.h"
+#include "RAFManager.h"
+#include "Champion.h"
+#include "Inibin.h"
+#include "LuaScript.h"
+
+using namespace std;
+
+Spell::Spell(Champion* owner, const std::string& spellName, uint8 slot) : owner(owner), spellName(spellName), level(0), slot(slot), state(STATE_READY), currentCooldown(0), currentCastTime(0) {
+   std::vector<unsigned char> iniFile;
+   if(!RAFManager::getInstance()->readFile("DATA/Spells/"+spellName+".inibin", iniFile)) {
+      if(!RAFManager::getInstance()->readFile("DATA/Characters/"+owner->getType()+"/"+spellName+".inibin", iniFile)) {
+         printf("ERR : couldn't find spell stats for %s\n", spellName.c_str());
+         return;
+      }
+   }
+   
+   Inibin inibin(iniFile);
+   
+   for(int i = 0; i < 5; ++i) {
+      char c = '0'+i+1;
+      cooldown[i] = inibin.getFloatValue("SpellData", string("Cooldown")+c);
+   }
+   
+   castTime = ((1.f+inibin.getFloatValue("SpellData", "DelayCastOffsetPercent")))/2.f;
+
+   printf("CastTime is %f for spell : %s", castTime, spellName.c_str() );
+}
+
 
 /**
  * Called when the character casts the spell
@@ -16,6 +41,8 @@ bool Spell::cast(float x, float y, Unit* u) {
    this->y = y;
    this->target = u;
    
+   
+   
    return true;
 }
 
@@ -24,7 +51,7 @@ bool Spell::cast(float x, float y, Unit* u) {
  * such as projectile spawning, etc.
  */
 void Spell::finishCasting() {
-    
+
    doLua();
    
    state = STATE_COOLDOWN;
@@ -84,9 +111,11 @@ void Spell::doLua(){
    
    
    script.lua.set_function("addProjectile", [this](float toX, float toY, float projectileSpeed) { 
+   owner->setPosition(owner->getX(), owner->getY()); // stop moving
    Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), 30, owner, new Target(toX, toY), this, projectileSpeed);
    owner->getMap()->addObject(p);
    owner->getMap()->getGame()->notifyProjectileSpawn(p);
+
    return;
    });
    
@@ -115,8 +144,10 @@ void Spell::update(int64 diff) {
       case STATE_READY:
          return;
       case STATE_CASTING:
+          
+    printf("Update spell %s , currentCastTime %f\n" , getStringForSlot().c_str(), (float)currentCastTime);
          currentCastTime -= diff/1000000.f;
-         if(currentCastTime < 0) {
+         if(currentCastTime <= 0) {
             finishCasting();
          }
          break;
@@ -127,4 +158,12 @@ void Spell::update(int64 diff) {
          }
          break;
    }
+}
+
+uint32 Spell::getId() const {
+   return RAFFile::getHash(spellName);
+}
+
+void Spell::applyEffects(Target* t, Projectile* p) {
+   
 }
