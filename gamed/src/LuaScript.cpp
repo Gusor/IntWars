@@ -1,7 +1,8 @@
 #include "LuaScript.h"
 #include "sol/state.hpp"
 LuaScript::LuaScript(){
-    lua.open_libraries(sol::lib::base, sol::lib::table);
+    lua.open_libraries(sol::lib::base, sol::lib::table, sol::lib::package, sol::lib::math, sol::lib::debug);
+    
 }
 
 sol::table LuaScript::getTable(std::string name){

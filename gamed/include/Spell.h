@@ -16,6 +16,8 @@ enum SpellState {
    STATE_COOLDOWN
 };
 
+
+
 class Spell {
 protected:
    uint32 id;
@@ -37,6 +39,8 @@ protected:
    
 public:
    Spell(uint32 id, Champion* owner, float castTime, uint8 slot) : id(id), owner(owner), level(0), slot(slot), state(STATE_READY), castTime(castTime), currentCooldown(0), currentCastTime(0) { }
+   
+   
    
    /**
     * Called when the character casts the spell

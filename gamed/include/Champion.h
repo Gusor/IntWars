@@ -38,6 +38,13 @@ public:
    }
    
    uint8 getSkillPoints() const { return skillPoints; }
+   
+   void teleportTo(float _x, float _y){
+   needsToTeleport = true;
+   teleportToX = (_x-MAP_WIDTH) / 2; 
+   teleportToY = (_y-MAP_HEIGHT)/2;
+   setPosition(_x, _y);
+   }
 
 };
 

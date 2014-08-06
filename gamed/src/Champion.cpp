@@ -47,3 +47,4 @@ void Champion::update(int64 diff) {
       s->update(diff);
    }
 }
+

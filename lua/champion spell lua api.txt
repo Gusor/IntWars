@@ -1,2 +1,4 @@
 getOwnerX(), getOwnerY() -> get caster champions coords
 getSpellToX, getSpellToY() -> spell casted to(NOTE: you must calculate range using vectors if you don't want unlimited spell range)
+teleportTo(float x, float y) teleports the champion to specified coords
+addProjectile(float toX, float toY, float speed) add a projectile(e.g Ez Q)

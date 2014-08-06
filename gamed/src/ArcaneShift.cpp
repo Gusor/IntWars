@@ -6,7 +6,7 @@
 void ArcaneShift::finishCasting() {
    Spell::finishCasting();
 
-
+/*
    printf("Teleporting to X:%f , Y:%f", x, y);
 
    Vector2 trueCoords;
@@ -31,7 +31,7 @@ void ArcaneShift::finishCasting() {
    owner->teleportToY = (trueCoords.Y-MAP_HEIGHT)/2;
    
    
-   owner->setPosition(trueCoords.X, trueCoords.Y);
+   owner->setPosition(trueCoords.X, trueCoords.Y);*/
    
    
 }

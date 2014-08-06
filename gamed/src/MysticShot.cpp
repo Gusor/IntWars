@@ -14,7 +14,8 @@
 void MysticShot::finishCasting() {
    Spell::finishCasting();
 
-   Map* m = owner->getMap();
+  
+  /* Map* m = owner->getMap();
    
    Vector2 trueCoords;
    Vector2 cur(owner->getX(), owner->getY());
@@ -27,7 +28,7 @@ void MysticShot::finishCasting() {
    
    Projectile* p = new Projectile(owner->getMap(), GetNewNetID(), owner->getX(), owner->getY(), 30, owner, new Target(trueCoords.X, trueCoords.Y), this, 2000.f);
    owner->getMap()->addObject(p);
-   owner->getMap()->getGame()->notifyProjectileSpawn(p);
+   owner->getMap()->getGame()->notifyProjectileSpawn(p);*/
 }
 
 /**
